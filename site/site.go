@@ -28,5 +28,6 @@ func init() {
 	if err != nil {
 		wd = "."
 	}
-	Site.Root =wd
+	Site.Root = wd
+	Site.Context = context.NewRootContext()
 }

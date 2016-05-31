@@ -52,23 +52,38 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-var buildCmd = &cobra.Command{
+var discoverCmd = &cobra.Command{
 	Use:   "discover",
-	Short: "Build the site",
-	Long:  ``,
+	Short: "Find and list files that are prart of the site",
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Finding Files")
 		for node := range site.Site.DiscoverFiles() {
-			log.Debug("Found node: %s", node.Path)
+			if !node.IsHandled() {
+				log.Info("Skipping unhandled node: %s", node.Path)
+			} else {
+				log.Out(node.Path)
+			}
 		}
 	},
 }
 
+var buildCmd = &cobra.Command{
+	Use: "build",
+	Short: "Build the site",
+	Run: func(cmd *cobra.Command, args []string) {
+		log.Info("Finding Files")
+		for node := range site.Site.DiscoverFiles() {
+			log.Out(node.Path)
+		}
+	},
+}
+
+
 func init() {
 	RootCmd.AddCommand(versionCmd)
+	RootCmd.AddCommand(discoverCmd)
 	RootCmd.AddCommand(buildCmd)
 	RootCmd.PersistentFlags().BoolVarP(&Options.Verbose, "verbose", "v", false, "verbose output")
 	RootCmd.PersistentFlags().BoolVarP(&Options.Debug, "debug", "d", false, "debugging output")
 	RootCmd.PersistentFlags().StringVarP(&Options.SiteRoot, "site", "s", "", "Site root")
-	//buildCmd.Flags().StringVarP(&Options.string, "dir", "d", "", "Directory to place build files in")
 }

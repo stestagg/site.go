@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/fatih/color"
-	"github.com/spf13/cast"
 
 )
 
@@ -17,6 +16,7 @@ var InfoColor *color.Color = color.New(color.FgGreen)
 var DebugColor *color.Color = color.New(color.FgCyan)
 var WarnColor *color.Color = color.New(color.FgHiYellow)
 var ErrColor *color.Color = color.New(color.BgRed).Add(color.Bold).Add(color.FgWhite)
+var XXXColor *color.Color = color.New(color.BgHiYellow).Add(color.FgBlack).Add(color.Bold)
 
 func shouldSkip(level int) bool {
 	return level > Verbosity
@@ -26,7 +26,7 @@ func wrapArgs(args []interface{}) ([]interface{}){
 	formattedArgs := make([]interface{}, 0)
 	for i := range args{
 		arg := args[i]
-		argstr := cast.ToString(arg)
+		argstr := ToString(arg)
 		formattedArgs = append(formattedArgs, ArgColor(argstr))
 	}
 	return formattedArgs
@@ -41,6 +41,11 @@ func doOutput(level int, tag_color *color.Color, tag string, msg string, args []
 
 func Info(msg string, args ...interface{}) {
 	doOutput(2, InfoColor, "Info", msg, args)
+}
+
+func Out(msg string, args ...interface{}) {
+	msg = fmt.Sprintf("%s\n", msg)
+	fmt.Fprintf(color.Output, msg, args...)
 }
 
 func Debug(msg string, args ...interface{}) {
@@ -61,4 +66,8 @@ func Panic(msg string, args ...interface{}) {
 		panic("")
 	}
 	os.Exit(1)
+}
+
+func XXX(msg string, args ...interface{}) {
+	doOutput(0, XXXColor, "XXX", msg, args)
 }
