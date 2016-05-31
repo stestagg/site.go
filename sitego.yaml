@@ -1,0 +1,4 @@
+site.ignore_patterns: .*
+site.handlers:
+  - pattern: "*.md"
+    handlers: []
