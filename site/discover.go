@@ -40,7 +40,7 @@ func visitDir(name string, context *context.Context, found finder, wg *sync.Wait
 			visitDir(child_name, &dirContext, found, wg)
 		} else {
 			wg.Add(1)
-			visitFile(child_name, name, &dirContext, found, wg)
+			visitFile(child_name, entry.Name(), &dirContext, found, wg)
 		}
 	}
 }
@@ -50,7 +50,11 @@ func visitFile(path string, name string, context *context.Context, found finder,
 	ctx := context.NewEmptyContext(path)
 	defer wg.Done()
 	node := NewNode(path, name, &ctx)
-	found <- node
+	if node.HasPipeline() {
+		found <- node
+	} else {
+		log.Info("Skipping %s as no pipeline could be found", name)
+	}
 }
 
 

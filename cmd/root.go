@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -37,7 +38,11 @@ var RootCmd = &cobra.Command{
 		}
 
 		if Options.SiteRoot != "" {
-			site.Site.SetRoot(Options.SiteRoot)
+			abspath, err := filepath.Abs(Options.SiteRoot)
+			if err != nil {
+				log.Panic("Could not find site root %s: %s", Options.SiteRoot, err)
+			}
+			site.Site.SetRoot(abspath)
 			log.Info("Setting site root to %s", Options.SiteRoot)
 		}
 	},
@@ -58,11 +63,7 @@ var discoverCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Finding Files")
 		for node := range site.Site.DiscoverFiles() {
-			if !node.IsHandled() {
-				log.Info("Skipping unhandled node: %s", node.Path)
-			} else {
-				log.Out(node.Path)
-			}
+			log.Out(node.Path)
 		}
 	},
 }

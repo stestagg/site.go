@@ -30,7 +30,6 @@ func (c *Context) NewEmptyContext(Source string) Context {
 	return ctx
 }
 
-
 // -----
 
 func (c *Context) get(key string) interface{}{
